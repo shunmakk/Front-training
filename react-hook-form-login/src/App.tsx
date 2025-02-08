@@ -7,7 +7,12 @@ type LoginData = {
 };
 
 function App() {
-  const { register, handleSubmit } = useForm<LoginData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    //複数のバリデーションエラーを取得するためにcriteriaModeをallに
+  } = useForm<LoginData>({ criteriaMode: "all" });
   const onSubmit = (data: LoginData) => console.log(data);
 
   return (
@@ -16,11 +21,39 @@ function App() {
       <form>
         <div>
           <label htmlFor="email">Email</label>
-          <input id="email" {...register("email")} />
+          <input
+            type="email"
+            id="email"
+            {...register("email", {
+              required: { value: true, message: "必須の入力項目です" },
+            })}
+          />
+          {errors.email && <div>必須の入力項目です</div>}
         </div>
         <div>
           <label htmlFor="password">PassWord</label>
-          <input id="password" {...register("password")} />
+          <input
+            id="password"
+            type="password"
+            {...register("password", {
+              required: { value: true, message: "必須の入力項目です" },
+              pattern: {
+                value: /^[A-Za-z]+$/,
+                message: "アルファベットで入力してください",
+              },
+              minLength: {
+                value: 8,
+                message: "最低でも8文字以上入力してください",
+              },
+            })}
+          />
+          {errors.password?.types?.required && <div>必須の入力項目です</div>}
+          {errors.password?.types?.pattern && (
+            <div>{errors.password.types?.pattern}</div>
+          )}
+          {errors.password?.types?.minLength && (
+            <div>最低でも8文字以上入力してください</div>
+          )}
         </div>
         <button type="submit">Login</button>
       </form>
