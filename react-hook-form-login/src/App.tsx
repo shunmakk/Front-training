@@ -10,9 +10,14 @@ function App() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { isDirty, errors },
     //複数のバリデーションエラーを取得するためにcriteriaModeをallに
-  } = useForm<LoginData>({ criteriaMode: "all" });
+    //reValidateModeをonsubmitに変更して、loginButtonをクリックした時のみバリデーションをかける
+  } = useForm<LoginData>({
+    criteriaMode: "all",
+    reValidateMode: "onSubmit",
+    defaultValues: { email: "", password: "" },
+  });
   const onSubmit = (data: LoginData) => console.log(data);
 
   return (
@@ -55,7 +60,9 @@ function App() {
             <div>最低でも8文字以上入力してください</div>
           )}
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" disabled={!isDirty}>
+          Login
+        </button>
       </form>
     </section>
   );
