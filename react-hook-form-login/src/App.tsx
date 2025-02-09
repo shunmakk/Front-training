@@ -4,11 +4,14 @@ import { useForm } from "react-hook-form";
 type LoginData = {
   email: string;
   password: string;
+  age: number;
+  showAge: boolean;
 };
 
 function App() {
   const {
     register,
+    watch,
     handleSubmit,
     formState: { isDirty, errors },
     //複数のバリデーションエラーを取得するためにcriteriaModeをallに
@@ -18,6 +21,9 @@ function App() {
     reValidateMode: "onSubmit",
     defaultValues: { email: "", password: "" },
   });
+
+  const watchShowAge = watch("showAge", false);
+
   const onSubmit = (data: LoginData) => console.log(data);
 
   return (
@@ -60,6 +66,28 @@ function App() {
             <div>最低でも8文字以上入力してください</div>
           )}
         </div>
+        <div>
+          <label htmlFor="checkbox">規約に同意する</label>
+          <input
+            id="checkbox"
+            type="checkbox"
+            {...register("showAge", {
+              required: true,
+            })}
+          />
+          {errors.showAge?.types?.required && <div>checkしてください</div>}
+        </div>
+        {watchShowAge && (
+          <div>
+            <label htmlFor="checkbox">最後に10以上の文字を入力して</label>
+            <input
+              type="number"
+              {...register("age", { min: 10, required: true })}
+            />
+            {errors.age?.types?.min && <div>10以上を入力してください</div>}
+            {errors.age?.types?.required && <div>必須の入力項目です</div>}
+          </div>
+        )}
         <button type="submit" disabled={!isDirty}>
           Login
         </button>
