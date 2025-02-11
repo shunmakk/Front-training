@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 type LoginData = {
   email: string;
   password: string;
+  confirmPassword: string;
   age: number;
   showAge: boolean;
 };
@@ -64,6 +65,25 @@ function App() {
           )}
           {errors.password?.types?.minLength && (
             <div>最低でも8文字以上入力してください</div>
+          )}
+        </div>
+        <div>
+          <label htmlFor="confirmPassword">Confirm PassWord</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            {...register("confirmPassword", {
+              validate: (val) => {
+                if (!val) {
+                  return "入力が必須です";
+                } else if (watch("password") !== val) {
+                  return "passwordが一致してません";
+                }
+              },
+            })}
+          />
+          {errors.confirmPassword && (
+            <div>{errors.confirmPassword.message}</div>
           )}
         </div>
         <div>
