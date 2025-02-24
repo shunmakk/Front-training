@@ -17,4 +17,13 @@ export const handlers = [
   http.get("/api/users", () => {
     return HttpResponse.json(userList);
   }),
+
+  //serListの中から、パスパラメータのuserIdに紐づくユーザーをレスポンスとして返
+  http.get("/api/users/:userId", ({ params }) => {
+    const userId = Number(params.userId);
+    const user = userList.filter((item) => {
+      return item.id === Number(userId);
+    })[0];
+    return HttpResponse.json(user);
+  }),
 ];
