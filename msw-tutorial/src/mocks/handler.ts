@@ -35,9 +35,27 @@ export const handlers = [
   //特定のuser取得API
   http.get("/api/users/:userId", ({ params }) => {
     const userId = Number(params.userId);
+
+    //エラーハンドリング
+    if (!userId) {
+      return new HttpResponse(null, {
+        status: 404,
+        statusText: "bad request",
+      });
+    }
+
     const user = userList.filter((item) => {
       return item.id === Number(userId);
     })[0];
+
+    //エラーハンドリング
+    if (!user) {
+      return new HttpResponse(null, {
+        status: 404,
+        statusText: "no resource",
+      });
+    }
+
     return HttpResponse.json(user);
   }),
 
