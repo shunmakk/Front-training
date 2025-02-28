@@ -71,4 +71,19 @@ export const handlers = [
       statusText: "success",
     });
   }),
+
+  //cokkieの取得と送信
+  http.get("resource", async ({ cookies }) => {
+    //cokkieの値
+    console.log(cookies.mySecret);
+
+    //cokkieの送信
+    return HttpResponse.json(null, {
+      status: 201,
+      statusText: "success",
+      headers: {
+        "Set-Cookie": "mySecret=abc-123",
+      },
+    });
+  }),
 ];
