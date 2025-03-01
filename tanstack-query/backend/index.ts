@@ -7,13 +7,19 @@ const PORT = 3001;
 const cors = require("cors");
 app.use(cors());
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/", (req, res) => {
   res.send("hello");
 });
 
 const prisma = new PrismaClient();
 
-app.get("/todos", async (req, res) => {
+app.get("/todos", async (req: any, res: any) => {
+  //意図的にエラーを起こす
+  //   return res.status(500).json({ message: "Internal Server Error" });
+
   try {
     const todos = await prisma.todo.findMany();
     res.json(todos);
@@ -21,6 +27,17 @@ app.get("/todos", async (req, res) => {
     console.error("Error fetching todos:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+app.post("/todos/create", async (req: any, res: any) => {
+  const { name } = req.body;
+  const todo = await prisma.todo.create({
+    data: {
+      name,
+      isCompleted: false,
+    },
+  });
+  return res.json(todo);
 });
 
 app.listen(PORT, () => {

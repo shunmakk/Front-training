@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
 
 type Todos = {
   id: number;
@@ -8,20 +9,86 @@ type Todos = {
 
 const fetchTodos = async () => {
   const res = await fetch("http://localhost:3001/todos");
+  if (!res.ok) {
+    throw new Error(`${res.status} ${res.statusText}`);
+  }
   return res.json();
 };
 
 const Todo = () => {
+  const [name, setName] = useState<string>("");
+
+  const addTodo = async () => {
+    const res = await fetch("http://localhost:3001/todos/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+      }),
+    });
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    return res.json();
+  };
+
+  const queryClient = useQueryClient();
+
+  //useMutationでデータを追加
+  const addMutation = useMutation({
+    mutationFn: addTodo,
+    onSuccess: () => {
+      //追加ボタンをクリックした後にリロードなどを行わずに追加したデータをブラウザ上に反映させる
+      // v4.6以降の推奨される書き方
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(name);
+    addMutation.mutate();
+  };
+
   //UseQueryを使ってサーバー側のデータを取得
   //TanStack Query v4では、useQueryの引数の形式が変更されてため注意
-  const { data: todos } = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    data: todos,
+  } = useQuery({
     queryKey: ["todos"],
     queryFn: fetchTodos,
   });
 
+  if (isLoading) {
+    return <span>loading</span>;
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>;
+  }
+
   return (
     <div>
-      <h1>Todo一覧</h1>
+      <h2>Todo追加</h2>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="todoName">Add Todo</label>
+        <input
+          id="todoName"
+          placeholder="add Todo"
+          value={name}
+          onChange={handleChange}
+        />
+      </form>
+      <h2>Todo一覧</h2>
       <ul>
         {todos?.map((todo: Todos) => (
           <li key={todo.id}>{todo.name}</li>
