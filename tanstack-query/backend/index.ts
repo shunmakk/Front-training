@@ -40,6 +40,16 @@ app.post("/todos/create", async (req: any, res: any) => {
   return res.json(todo);
 });
 
+app.delete("/todos/:id", async (req: any, res: any) => {
+  const { id } = req.params;
+  const todo = await prisma.todo.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+  return res.json(todo);
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

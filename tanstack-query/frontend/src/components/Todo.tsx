@@ -39,10 +39,19 @@ const Todo = () => {
   //useMutationでデータを追加
   const addMutation = useMutation({
     mutationFn: addTodo,
+    onMutate: () => {
+      console.log("onMutate");
+    },
     onSuccess: () => {
       //追加ボタンをクリックした後にリロードなどを行わずに追加したデータをブラウザ上に反映させる
       // v4.6以降の推奨される書き方
       queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+    onError: () => {
+      console.log("onError");
+    },
+    onSettled: () => {
+      console.log("onSettled");
     },
   });
 
@@ -56,6 +65,28 @@ const Todo = () => {
     addMutation.mutate();
   };
 
+  //削除
+  const deleteTodo = async (id: number) => {
+    const res = await fetch(`http://localhost:3001/todos/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    return res.json();
+  };
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  const handleRemoveTodo = (id: number) => {
+    console.log(id);
+    deleteMutation.mutate(id);
+  };
   //UseQueryを使ってサーバー側のデータを取得
   //TanStack Query v4では、useQueryの引数の形式が変更されてため注意
   const {
@@ -91,7 +122,10 @@ const Todo = () => {
       <h2>Todo一覧</h2>
       <ul>
         {todos?.map((todo: Todos) => (
-          <li key={todo.id}>{todo.name}</li>
+          <li key={todo.id}>
+            {todo.name}
+            <button onClick={() => handleRemoveTodo(todo.id)}>❎</button>
+          </li>
         ))}
       </ul>
     </div>
