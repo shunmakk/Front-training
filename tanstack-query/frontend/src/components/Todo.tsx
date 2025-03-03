@@ -87,6 +87,34 @@ const Todo = () => {
     console.log(id);
     deleteMutation.mutate(id);
   };
+
+  //isCompletedの更新
+  const updateTodo = async (todo: Todos) => {
+    const res = await fetch(`http://localhost:3001/todos/${todo.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(todo),
+    });
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    return res.json();
+  };
+
+  const updateMutation = useMutation({
+    mutationFn: updateTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  const handleCheckChange = (todo: Todos) => {
+    console.log(todo);
+    updateMutation.mutate(todo);
+  };
+
   //UseQueryを使ってサーバー側のデータを取得
   //TanStack Query v4では、useQueryの引数の形式が変更されてため注意
   const {
@@ -122,7 +150,21 @@ const Todo = () => {
       <h2>Todo一覧</h2>
       <ul>
         {todos?.map((todo: Todos) => (
-          <li key={todo.id}>
+          <li
+            key={todo.id}
+            style={
+              todo.isCompleted === true
+                ? { textDecorationLine: "line-through" }
+                : {}
+            }
+          >
+            <input
+              type="checkbox"
+              checked={todo.isCompleted}
+              onChange={() =>
+                handleCheckChange({ ...todo, isCompleted: !todo.isCompleted })
+              }
+            />
             {todo.name}
             <button onClick={() => handleRemoveTodo(todo.id)}>❎</button>
           </li>
