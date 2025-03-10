@@ -8,6 +8,9 @@ import {
 import { ChevronDown, Filter } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { Product } from "@/db";
 
 const SORT_OPTIONS = [
   { name: "None", value: "None" },
@@ -20,6 +23,24 @@ export default function Home() {
     sort: "none",
   });
   console.log(filiter);
+
+  //tanstackqueryを使ってデータを読み取る
+  const { data: products } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const { data } = await axios.post<Product[]>(
+        "http://localhost:3000/api/products",
+        {
+          filiter: {
+            sort: filiter.sort,
+          },
+        }
+      );
+      return data;
+    },
+  });
+
+  console.log(products);
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
