@@ -10,7 +10,8 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Product } from "@/db";
+import type { Product as TypeProduct } from "@/db";
+import Product from "@/components/Products/Product";
 
 const SORT_OPTIONS = [
   { name: "None", value: "None" },
@@ -28,7 +29,7 @@ export default function Home() {
   const { data: products } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      const { data } = await axios.post<Product[]>(
+      const { data } = await axios.post<TypeProduct[]>(
         "http://localhost:3000/api/products",
         {
           filiter: {
@@ -81,6 +82,22 @@ export default function Home() {
           </button>
         </div>
       </div>
+
+      <section className="pb-24 pt-6">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:gtid-cols-4">
+          {/* filiters */}
+          <div></div>
+
+          {/* product grid */}
+          <ul className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {products?.map((product, index) => (
+              <li key={index}>
+                <Product product={product.metadata!} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
     </main>
   );
 }

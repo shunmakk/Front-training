@@ -4,6 +4,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 export type Product = {
+  metadata: Product;
   id: string;
   imageId: string;
   name: string;
