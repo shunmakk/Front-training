@@ -1,4 +1,4 @@
-import { useAtom, useSetAtom } from "jotai";
+import { atom, useAtom, useSetAtom } from "jotai";
 import {
   firstNameAtom,
   lastNameAtom,
@@ -7,6 +7,7 @@ import {
 } from "../basic/atom";
 import { useEffect } from "react";
 import dayjs from "dayjs";
+import { RESET, useResetAtom } from "jotai/utils";
 
 type Props = {
   onSubmit: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,11 +32,18 @@ export function Form({ onSubmit }: Props) {
     onSubmit(true);
   };
 
+  //フォームリセット用の関数
+  const resetAll = useResetAtom(
+    atom(null, (_, set) => {
+      set(firstNameAtom, RESET);
+      set(lastNameAtom, RESET);
+      set(birthdayAtom, RESET);
+      set(currentAgeAtom, RESET);
+    })
+  );
+
   const handleReset = () => {
-    setFirstName("");
-    setLastName("");
-    setBirthday(null);
-    setCurrentAge(null);
+    resetAll();
     onSubmit(false);
   };
 

@@ -1,7 +1,8 @@
-import { atom } from "jotai";
+import { atomWithReset } from "jotai/utils";
 
 //atomの定義
-export const firstNameAtom = atom<string>("");
-export const lastNameAtom = atom<string>("");
-export const birthdayAtom = atom<Date | null>(null);
-export const currentAgeAtom = atom<number | null>(null);
+//リセット時は Atom を定義した時のデフォルト値に戻るようにatomWithResetを使用
+export const firstNameAtom = atomWithReset<string>("");
+export const lastNameAtom = atomWithReset<string>("");
+export const birthdayAtom = atomWithReset<Date | null>(null);
+export const currentAgeAtom = atomWithReset<number | null>(null);
