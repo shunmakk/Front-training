@@ -1,12 +1,12 @@
-import { atom, useAtom, useSetAtom } from "jotai";
+import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   firstNameAtom,
   lastNameAtom,
   birthdayAtom,
   currentAgeAtom,
+  bithdayFormatAtom,
+  setCurrentAgeAtom,
 } from "../basic/atom";
-import { useEffect } from "react";
-import dayjs from "dayjs";
 import { RESET, useResetAtom } from "jotai/utils";
 
 type Props = {
@@ -17,19 +17,21 @@ export function Form({ onSubmit }: Props) {
   //useAtomで値と更新用関数を取得 usestateみたいな感じか
   const [firstName, setFirstName] = useAtom(firstNameAtom);
   const [lastName, setLastName] = useAtom(lastNameAtom);
-  const [birthday, setBirthday] = useAtom(birthdayAtom);
+  const birthday = useAtomValue(birthdayAtom);
+  const [valueBirthday, onChangeBirthday] = useAtom(bithdayFormatAtom);
   //usesetAtomは更新用関数のみを取得
-  const setCurrentAge = useSetAtom(currentAgeAtom);
+  const setCurrentAge = useSetAtom(setCurrentAgeAtom);
 
   //dayisライブラリで年齢を計算するロジック
-  useEffect(() => {
-    if (!birthday) return;
-    setCurrentAge(dayjs().diff(birthday, "year"));
-  }, [birthday, setCurrentAge]);
+  // useEffect(() => {
+  //   if (!birthday) return;
+  //   setCurrentAge(dayjs().diff(birthday, "year"));
+  // }, [birthday, setCurrentAge]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(true);
+    setCurrentAge();
   };
 
   //フォームリセット用の関数
@@ -79,10 +81,9 @@ export function Form({ onSubmit }: Props) {
           <input
             type="date"
             id="birthday"
-            //"YYYY-MM-DD"方式にformat
-            value={birthday ? dayjs(birthday).format("YYYY-MM-DD") : ""}
+            value={valueBirthday}
             //Date型に変換
-            onChange={(e) => setBirthday(dayjs(e.target.value).toDate())}
+            onChange={(e) => onChangeBirthday(e.target.value)}
           />
         </div>
         <span>日付を入力</span>

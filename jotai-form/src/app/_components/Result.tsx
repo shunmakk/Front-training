@@ -1,13 +1,15 @@
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import { useAtomValue } from "jotai";
-import {
-  birthdayAtom,
-  currentAgeAtom,
-  firstNameAtom,
-  lastNameAtom,
-} from "../basic/atom";
+// import {
+//   birthdayAtom,
+//   currentAgeAtom,
+//   firstNameAtom,
+//   lastNameAtom,
+// } from "../basic/atom";
 
-dayjs.locale("ja");
+// dayjs.locale("ja");
+//atomが定義されたファイルでロジックを書いたものをimport
+import { fullnameAtom, birthdayJpAtom, currentAgeAtom } from "../basic/atom";
 
 type Props = {
   isShow: boolean;
@@ -15,10 +17,12 @@ type Props = {
 
 export function Result({ isShow }: Props) {
   //useAtomValueでatom の値のみを取得
-  const firstName = useAtomValue(firstNameAtom);
-  const lastName = useAtomValue(lastNameAtom);
-  const birthday = useAtomValue(birthdayAtom);
+  // const firstName = useAtomValue(firstNameAtom);
+  // const lastName = useAtomValue(lastNameAtom);
+  // const birthday = useAtomValue(birthdayAtom);
   const currentAge = useAtomValue(currentAgeAtom);
+  const fullName = useAtomValue(fullnameAtom);
+  const birthdayJP = useAtomValue(birthdayJpAtom);
 
   return (
     <>
@@ -27,8 +31,8 @@ export function Result({ isShow }: Props) {
           <span>Result</span>
           <div className="contentInner result">
             <p>
-              <b>{`${firstName} ${lastName}`.toUpperCase()}</b>さんは
-              {<b>{dayjs(birthday).format("YYYY年M月D日")}</b>}生まれです
+              <b>{fullName}</b>さんは
+              <b>{birthdayJP}</b>生まれです
             </p>
             <p>
               現在<b>{currentAge}</b>歳です

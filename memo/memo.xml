@@ -8,3 +8,6 @@ TanStack Queryでは、クエリキーは常に配列として扱われること
 クエリキーの階層構造を表現できそう
 Atom とは "Jotai" で状態を管理する最小単位。それぞれが独立しているため、更新や使用が簡単にできる、
 状態をリセットする時は、atomWithResetでデフォルト値に戻すといいらしい
+Read Only Atom: 第2引数を省略すると Read Only となる
+Write Only Atom: 第1引数を "null" にすると Write Only となる
+ Write Read Atom: 第1引数, 第2引数の両方と設定することもできる
