@@ -23,11 +23,11 @@ function App() {
     <>
       <h1>Hello World</h1>
       <div className="wrapper">
-        <Link to="/">Home</Link>
+        <Link to="/page1">Home</Link>
         <button
           onClick={() =>
             navigate({
-              to: "/",
+              to: "/page1",
             })
           }
         >
