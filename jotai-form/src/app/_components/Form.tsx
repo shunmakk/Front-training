@@ -8,6 +8,7 @@ import {
   setCurrentAgeAtom,
 } from "../basic/atom";
 import { RESET, useResetAtom } from "jotai/utils";
+import { useState } from "react";
 
 type Props = {
   onSubmit: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,6 +22,7 @@ export function Form({ onSubmit }: Props) {
   const [valueBirthday, onChangeBirthday] = useAtom(bithdayFormatAtom);
   //usesetAtomは更新用関数のみを取得
   const setCurrentAge = useSetAtom(setCurrentAgeAtom);
+  const [disabledFlag, setDisabledFlag] = useState(false);
 
   //dayisライブラリで年齢を計算するロジック
   // useEffect(() => {
@@ -32,6 +34,7 @@ export function Form({ onSubmit }: Props) {
     e.preventDefault();
     onSubmit(true);
     setCurrentAge();
+    setDisabledFlag(true);
   };
 
   //フォームリセット用の関数
@@ -47,6 +50,7 @@ export function Form({ onSubmit }: Props) {
   const handleReset = () => {
     resetAll();
     onSubmit(false);
+    setDisabledFlag(false);
   };
 
   return (
@@ -54,24 +58,32 @@ export function Form({ onSubmit }: Props) {
       <div className="formControll">
         <div>
           <label htmlFor="firstName">First Name</label>
-          <input
-            type="text"
-            id="firstName"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
+          {disabledFlag ? (
+            <input disabled value={""} />
+          ) : (
+            <input
+              type="text"
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          )}
         </div>
         <span>※ 英字（小文字）のみ入力</span>
       </div>
       <div className="formControll">
         <div>
           <label htmlFor="lastName">Last Name</label>
-          <input
-            type="text"
-            id="lastName"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
+          {disabledFlag ? (
+            <input disabled value={""} />
+          ) : (
+            <input
+              type="text"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          )}
         </div>
         <span>※ 英字（小文字）のみ入力</span>
       </div>

@@ -10,12 +10,11 @@ export const birthdayAtom = atomWithReset<Date | null>(null);
 export const currentAgeAtom = atomWithReset<number | null>(null);
 
 //atomの扱いをこのファイルで定義
-
 //read onlyアトム
+//firstNameAtomとlastNameAtomを結合して大文字にして返す
 export const fullnameAtom = atom((get) =>
   `${get(firstNameAtom)} ${get(lastNameAtom)}`.toUpperCase()
 );
-
 export const birthdayJpAtom = atom((get) => {
   const birthday = get(birthdayAtom);
   return birthday ? dayjs(birthday).format("YYYY年M月D日") : "";
